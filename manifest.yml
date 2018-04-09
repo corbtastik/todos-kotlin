@@ -1,0 +1,7 @@
+---
+applications:
+- name: todomvc-api 
+  memory: 1G
+  host: todomvc-api
+  path: target/simple_kotlin-0.0.1-SNAPSHOT.jar
+  buildpack: java_buildpack
