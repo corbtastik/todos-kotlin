@@ -19,7 +19,6 @@ data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false, 
         get()="${Config.root}/$id"
 }
 
-
 @RestController
 @CrossOrigin
 class TodosAPI {
