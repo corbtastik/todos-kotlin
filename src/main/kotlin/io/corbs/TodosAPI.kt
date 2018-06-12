@@ -4,19 +4,21 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.*
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.cloud.client.ServiceInstance
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.discovery.DiscoveryClient
+
 
 var seq:Int=0
 
-data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false, var order:Int=-1){
+data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false){
 
     // Needed because of jackson
     // Can also add jackson-kotlin, but need to update mapper. 1 line vs 15 ...
     @Suppress("unused")
     constructor():this(0)
-
-    @Suppress("unused")
-    val url:String
-        get()="${Config.root}/$id"
 }
 
 
@@ -25,6 +27,15 @@ data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false, 
 class TodosAPI {
 
     val todos = HashMap<Int, Todo>()
+
+    @Autowired
+    private val discoveryClient: DiscoveryClient? = null
+
+    @RequestMapping("/service-instances/{applicationName}")
+    fun serviceInstancesByApplicationName(
+            @PathVariable applicationName: String): List<ServiceInstance> {
+        return this.discoveryClient!!.getInstances(applicationName)
+    }
 
     @GetMapping("/")
     fun listTodo(): Flux<Todo> = Flux.fromIterable(todos.values)
@@ -39,9 +50,9 @@ class TodosAPI {
     @DeleteMapping("/")
     fun clean() { todos.clear() }
 
-    @GetMapping("/hi")
+    @GetMapping("/howdy")
     fun hi(): String {
-        return "hi"
+        return "howdy"
     }
 
     @GetMapping("/{id}")
@@ -59,7 +70,6 @@ class TodosAPI {
         val old=todos[id]!!
         if (!todo.title.isEmpty()) old.title=todo.title
         if (todo.completed) old.completed=true
-        if (todo.order>-1) old.order=todo.order
 
         return Mono.just(old)
     }
