@@ -7,6 +7,8 @@ import java.util.*
 
 var seq:Int=0
 
+data class Person(var name: String)
+
 data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false, var order:Int=-1){
 
     // Needed because of jackson
@@ -20,7 +22,6 @@ data class Todo(var id:Int=0, var title:String="", var completed:Boolean=false, 
 }
 
 @RestController
-@CrossOrigin
 class TodosAPI {
 
     val todos = HashMap<Int, Todo>()
